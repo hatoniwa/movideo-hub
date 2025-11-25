@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MOVIDEO Hub — Pick Your Story</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    margin: 0; background: #111; color: #fff;
+    font-family: system-ui, sans-serif;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; gap: 12px;
+  }
+  h1 { color: #ffd54a; font-size: 1.6em; }
+
+  select, button {
+    background: #1a1a1a; color: #fff;
+    border: 1px solid #333; border-radius: 8px;
+    padding: 8px 12px; font-size: 1rem;
+    cursor: pointer; margin: 4px;
+  }
+
+  button.primary { background: #ffd54a; color: #111; font-weight: bold; }
+
+  iframe {
+    width: 90vw;
+    max-width: 800px;
+    height: calc(90vw * 9 / 16);
+    max-height: calc(800px * 9 / 16);
+    border: 1px solid #333;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+  }
+
+  footer { margin-top: 10px; font-size: 0.9em; opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<h1>🎬 MOVIDEO Story Collection</h1>
+
+<div>
+  <label>Select a story:
+    <select id="pick"></select>
+  </label>
+
+  <button id="play" class="primary">▶ Play</button>
+  <button id="open">🗗 Open in New Tab</button>
+  <button id="stop">⏹ Stop</button>
+  <button id="fullscreen">⛶ Fullscreen</button>
+</div>
+
+<iframe id="player" allow="autoplay; picture-in-picture" allowfullscreen></iframe>
+
+<footer>
+  <button onclick="location.href='end_card.html'">🛑 End Game</button>
+</footer>
+
+<script>
+  const items = [
+    { label: 'CCMOVID — Intro Scene', url: 'https://hatoniwa.github.io/movideo-docks-ccmovid/gg-intro.html' },
+    { label: 'BBMOVID — Coming Soon', url: 'https://hatoniwa.github.io/movideo-docks-bbmovid/' },
+    { label: 'EEMOVID — Coming soon', url: 'https://hatoniwa.github.io/movideo-docks-eemovid/' },
+    { label: 'FFMOVID — Coming soon', url: 'https://hatoniwa.github.io/movideo-docks-ffmovid/' },
+    { label: 'GGMOVID — Coming soon', url: 'https://hatoniwa.github.io/movideo-docks-ggmovid/' },
+
+    /* ★ gameC（実行可能URL版） */
+    { label: 'ZZMOVID — gameC', url: 'https://hatoniwa.github.io/game-commons/7sec_gameC.html' },
+
+    { label: 'DDMOVID — Coming Soon', url: 'https://hatoniwa.github.io/movideo-docks-ddmovid/' }
+  ];
+
+  const pick = document.getElementById('pick');
+  const player = document.getElementById('player');
+
+  const playBtn = document.getElementById('play');
+  const openBtn = document.getElementById('open');
+  const stopBtn = document.getElementById('stop');
+  const fullscreenBtn = document.getElementById('fullscreen');
+
+  // ▼ Picker の内容を構築
+  items.forEach((item, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = item.label;
+    pick.appendChild(opt);
+  });
+
+  // ▼ Play：作品再生
+  function playSelected() {
+    const url = items[Number(pick.value)].url;
+    player.src = url;
+  }
+
+  // ▼ 別タブで開く
+  function openSelected() {
+    const url = items[Number(pick.value)].url;
+    window.open(url, '_blank');
+  }
+
+  // ▼ Fullscreen：フルスクリーン切り替え
+  fullscreenBtn.onclick = () => {
+    const iframe = document.getElementById("player");
+    if (!document.fullscreenElement) {
+      iframe.requestFullscreen().catch(err => console.error(err));
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  // ▼ Stop：完全停止＋スクロール
+  function stopPlayer() {
+
+    // 1. フルスクリーン中なら解除
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+
+    // 2. ゲーム・動画を完全停止（iframe を破棄）
+    const oldFrame = document.getElementById("player");
+    const newFrame = oldFrame.cloneNode(true);
+    oldFrame.parentNode.replaceChild(newFrame, oldFrame);
+
+    // 3. ピッカーまで自動スクロール
+    pick.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  // ▼ ボタンに機能を割り当て
+  playBtn.onclick = playSelected;
+  openBtn.onclick = openSelected;
+  stopBtn.onclick = stopPlayer;
+
+</script>
+
+</body>
+</html>
