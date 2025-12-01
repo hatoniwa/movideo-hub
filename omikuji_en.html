@@ -139,21 +139,6 @@ fetch("https://api.countapi.xyz/hit/hatoniwa/omikuji_en")
 </style>
 </head>
 <body>
-  <div id="container">
-    <canvas id="sakura"></canvas>
-    <div id="caption">"Omikuji — sacred paper fortunes that whisper guidance to your soul."</div>
-    <button id="bgm-toggle" onclick="toggleBGM()">🎵 BGM</button>
-    <button id="start-btn" onclick="drawFortune()">🎴 Draw Your Fortune</button>
-
-    <div id="result">
-      <div id="fortune-title"></div>
-      <div id="fortune-reading"></div>
-      <div id="fortune-text"></div>
-      <button class="btn" onclick="restart()">Draw Again</button>
-      <button class="btn" style="background:#003300" onclick="endFortune()">End the Fortune</button>
-    </div>
-  </div>
-
   <audio id="draw-sound" src="draw_omikuji.mp3" preload="auto"></audio>
   <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
 
