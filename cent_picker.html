@@ -57,7 +57,22 @@
 <footer>
   <button onclick="location.href='end_card.html'">🛑 End Game</button>
 </footer>
+  
+  });
+</script> 
+  <div id="visitCount"
+     style="position:absolute; top:10px; right:10px; padding:6px 12px;
+            background:#222; color:#ffd54a; border-radius:12px; 
+            font-size:14px; opacity:0.85;">
+  Loading...
+</div>
 
+<script>
+fetch('https://api.countapi.xyz/hit/hatoniwa/movideo01')
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('visitCount').textContent =
+      "👁 Views: " + data.value;  
 <script>
   const items = [
     { label: 'CCMOVID — game 10', url: 'https://hatoniwa.github.io/movideo-docks-ccmovid/gg-intro.html' },
