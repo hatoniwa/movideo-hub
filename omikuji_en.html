@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=640, initial-scale=1">
 <title>Japanese Omikuji – Sakura Shrine</title>
 <style>
+<!-- 🌟 MOVIDEO Counter: omikuji_en -->
+<script>
+fetch("https://api.countapi.xyz/hit/hatoniwa/omikuji_en")
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById("visitCount").textContent =
+      "👁 Views: " + d.value;
+  })
+  .catch(() => {
+    document.getElementById("visitCount").textContent =
+      "👁 Views: ---";
+  });
+</script>  
   body {
     margin: 0;
     background: #000;
