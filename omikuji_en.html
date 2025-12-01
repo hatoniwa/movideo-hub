@@ -175,6 +175,7 @@
     const bgmToggle = document.getElementById('bgm-toggle');
     let bgmPlaying = false;
     function toggleBGM(){
+      if (!bgm || !bgmToggle) return;
       if(!bgmPlaying){
         bgm.volume = 0.4;
         bgm.play().catch(function(e) { console.warn('BGM playback failed:', e); });
