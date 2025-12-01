@@ -4,20 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=640, initial-scale=1">
 <title>Japanese Omikuji – Sakura Shrine</title>
-<style>
 <!-- 🌟 MOVIDEO Counter: omikuji_en -->
 <script>
-fetch("https://api.countapi.xyz/hit/hatoniwa/omikuji_en")
-  .then(r => r.json())
-  .then(d => {
-    document.getElementById("visitCount").textContent =
-      "👁 Views: " + d.value;
-  })
-  .catch(() => {
-    document.getElementById("visitCount").textContent =
-      "👁 Views: ---";
-  });
-</script>  
+document.addEventListener('DOMContentLoaded', function() {
+  fetch("https://api.countapi.xyz/hit/hatoniwa/omikuji_en")
+    .then(r => r.json())
+    .then(d => {
+      const el = document.getElementById("visitCount");
+      if (el) el.textContent = "👁 Views: " + d.value;
+    })
+    .catch(() => {
+      const el = document.getElementById("visitCount");
+      if (el) el.textContent = "👁 Views: ---";
+    });
+});
+</script>
+<style>
   body {
     margin: 0;
     background: #000;
@@ -142,6 +144,20 @@ fetch("https://api.countapi.xyz/hit/hatoniwa/omikuji_en")
   <audio id="draw-sound" src="draw_omikuji.mp3" preload="auto"></audio>
   <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
 
+  <div id="container">
+    <canvas id="sakura"></canvas>
+    <div id="caption">🌸 Draw your fortune 🌸 <span id="visitCount"></span></div>
+    <button id="bgm-toggle" onclick="toggleBGM()">🎵 BGM</button>
+    <button id="start-btn" onclick="drawFortune()">🔮 Draw Omikuji</button>
+    <div id="result">
+      <div id="fortune-title"></div>
+      <div id="fortune-reading"></div>
+      <div id="fortune-text"></div>
+      <button class="btn" onclick="restart()">🎋 Try Again</button>
+      <button class="btn" onclick="endFortune()">🚪 End</button>
+    </div>
+  </div>
+
   <script>
     /* --- Fortune Data --- */
     const fortunes = [
@@ -166,9 +182,10 @@ fetch("https://api.countapi.xyz/hit/hatoniwa/omikuji_en")
     const bgmToggle = document.getElementById('bgm-toggle');
     let bgmPlaying = false;
     function toggleBGM(){
+      if(!bgm || !bgmToggle) return;
       if(!bgmPlaying){
         bgm.volume = 0.4;
-        bgm.play();
+        bgm.play().catch(() => {});
         bgmPlaying = true;
         bgmToggle.textContent = "🔇 Stop BGM";
       } else {
@@ -180,50 +197,62 @@ fetch("https://api.countapi.xyz/hit/hatoniwa/omikuji_en")
 
     /* --- Omikuji Draw --- */
     function drawFortune(){
-      document.getElementById('draw-sound').play();
+      const drawSound = document.getElementById('draw-sound');
+      if(drawSound) drawSound.play().catch(() => {});
       const f = fortunes[Math.floor(Math.random()*fortunes.length)];
-      document.getElementById('fortune-title').textContent = `${f.jp} (${f.romaji})`;
-      document.getElementById('fortune-reading').textContent = f.eng;
-      document.getElementById('fortune-text').textContent = f.text;
-      document.getElementById('result').style.display = 'flex';
-      document.getElementById('start-btn').style.display = 'none';
+      const fortuneTitle = document.getElementById('fortune-title');
+      const fortuneReading = document.getElementById('fortune-reading');
+      const fortuneText = document.getElementById('fortune-text');
+      const result = document.getElementById('result');
+      const startBtn = document.getElementById('start-btn');
+      if(fortuneTitle) fortuneTitle.textContent = `${f.jp} (${f.romaji})`;
+      if(fortuneReading) fortuneReading.textContent = f.eng;
+      if(fortuneText) fortuneText.textContent = f.text;
+      if(result) result.style.display = 'flex';
+      if(startBtn) startBtn.style.display = 'none';
     }
 
     function restart(){
-      document.getElementById('result').style.display = 'none';
-      document.getElementById('start-btn').style.display = 'block';
+      const result = document.getElementById('result');
+      const startBtn = document.getElementById('start-btn');
+      if(result) result.style.display = 'none';
+      if(startBtn) startBtn.style.display = 'block';
     }
 
-// 変更後
-function endFortune(){
-  bgm.pause();
-  // ここに配置します
-  window.location.href = "end_card.html"; 
-}
+    function endFortune(){
+      if(bgm) bgm.pause();
+      bgmPlaying = false;
+      window.location.href = "end_card.html"; 
+    }
+
     /* --- Sakura Petal Effect --- */
     const canvas = document.getElementById('sakura');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas ? canvas.getContext('2d') : null;
     let petals = [];
 
     function resizeCanvas(){
+      if(!canvas) return;
       canvas.width = canvas.clientWidth;
       canvas.height = canvas.clientHeight;
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    for(let i=0;i<25;i++){
-      petals.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        r: Math.random()*4+2,
-        speed: Math.random()*1+0.5,
-        drift: Math.random()*1-0.5,
-        opacity: Math.random()*0.8+0.2
-      });
+    if(canvas){
+      for(let i=0;i<25;i++){
+        petals.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          r: Math.random()*4+2,
+          speed: Math.random()*1+0.5,
+          drift: Math.random()*1-0.5,
+          opacity: Math.random()*0.8+0.2
+        });
+      }
     }
 
     function drawPetals(){
+      if(!canvas || !ctx) return;
       ctx.clearRect(0,0,canvas.width,canvas.height);
       ctx.fillStyle = "rgba(255,182,193,0.8)";
       for(const p of petals){
